@@ -36,3 +36,25 @@ Initial EDA – Air pollution level comparison (Ahmedabad vs Vapi)
 - Analyze temperature and heat index from weather data (Day 3)
 - Start integrating DL/ML-based insights into EDA
 - Prepare for first Git commit
+
+----------------------------------------
+🗓️ Day 3 – Heat Index & Weather EDA
+Date: 2025-07-03
+----------------------------------------
+
+✅ Weather data fetched for 3 cities (Ahmedabad, Vapi, Bengaluru) using OpenWeatherMap API
+✅ Heat Index calculated using Rothfusz regression formula
+✅ Updated dataset saved to: data/weather_data_with_heat_index.csv
+✅ Heat Index bar chart created and saved: reports/images/heat_index_bar_chart.png
+
+📊 Insights:
+- Ahmedabad recorded the highest Heat Index (34.3°C), mainly due to high humidity (71%)
+- Vapi, despite lower temperature, had a high index (30.5°C) due to extreme humidity (94%)
+- Bengaluru had the most comfortable index (28.3°C), showing why it's considered ideal weather-wise
+
+📝 Conclusion:
+Humidity strongly influences urban heat discomfort. Cities like Ahmedabad and Vapi may require smart alert systems for humid heatwaves.
+
+📌 All code saved inside:
+- notebooks/heat_index_analysis.py
+- notebooks/heat_index_visualization.py
