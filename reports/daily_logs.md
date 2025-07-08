@@ -72,3 +72,36 @@ All code saved inside:
 -  All charts saved in /reports/images/
 -  Bengaluru excluded from this analysis due to missing pollutant data
 
+# 📅 Day 5 – Machine Learning: Heat Index Prediction Model (2025-07-08)
+
+## ✅ Tasks Completed:
+- Successfully merged real-time AQI and weather data (temperature, humidity) for:
+  - Ahmedabad
+  - Vapi
+- Calculated the **Heat Index** and stored it in a merged CSV file.
+- Built a basic **Linear Regression model** to predict Heat Index based on:
+  - `pm25`, `pm10`, `no2`, `so2`, `co`, `temperature`, `humidity`
+- Evaluated model performance:
+  - MAE: 0.00
+  - RMSE: 0.00
+  - R² Score: 1.00
+  - ✅ Perfect prediction due to only 2 data samples (expected overfitting).
+- Plotted **Predicted vs Actual Heat Index** and fixed legend/colors for clarity.
+- Saved:
+  - Trained model → `models/heat_index_predictor.pkl`
+  - Prediction plot → `reports/images/heat_index_prediction_plot.png`
+
+## 🛠️ Issues Faced:
+- File path mismatches for reading merged CSV.
+- `mean_squared_error(..., squared=False)` not supported in current sklearn version → manually computed RMSE.
+- Small data size caused misleading metrics (perfect fit).
+
+## 📌 Learnings:
+- Importance of data quantity for model generalization.
+- Need for robust path handling and reproducibility.
+- Verified working ML pipeline: data → model → evaluation → save.
+
+## 🔜 Next Steps (Day 5 Preview):
+- Collect more data points by running fetch script over multiple timestamps/days.
+- Expand dataset across time to enable meaningful train/test split.
+- Retrain and re-evaluate ML model with real variation.
