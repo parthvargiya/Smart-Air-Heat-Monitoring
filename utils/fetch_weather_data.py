@@ -23,6 +23,6 @@ for city in cities:
 
 # Convert and save to ../data/
 df = pd.DataFrame(weather_data)
-output_path = os.path.join("..", "data", "weather_data_2025-07-03.csv")
+output_path = os.path.join("data", "weather_data_2025-07-09.csv")
 df.to_csv(output_path, index=False)
 print(" Weather data saved:", os.path.abspath(output_path))

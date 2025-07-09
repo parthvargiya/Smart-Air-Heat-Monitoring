@@ -72,9 +72,9 @@ All code saved inside:
 -  All charts saved in /reports/images/
 -  Bengaluru excluded from this analysis due to missing pollutant data
 
-# 📅 Day 5 – Machine Learning: Heat Index Prediction Model (2025-07-08)
+#  "Day 5 – Machine Learning: Heat Index Prediction Model" (2025-07-08)
 
-## ✅ Tasks Completed:
+## Tasks Completed:
 - Successfully merged real-time AQI and weather data (temperature, humidity) for:
   - Ahmedabad
   - Vapi
@@ -85,23 +85,63 @@ All code saved inside:
   - MAE: 0.00
   - RMSE: 0.00
   - R² Score: 1.00
-  - ✅ Perfect prediction due to only 2 data samples (expected overfitting).
+  -  Perfect prediction due to only 2 data samples (expected overfitting).
 - Plotted **Predicted vs Actual Heat Index** and fixed legend/colors for clarity.
 - Saved:
   - Trained model → `models/heat_index_predictor.pkl`
   - Prediction plot → `reports/images/heat_index_prediction_plot.png`
 
-## 🛠️ Issues Faced:
+## Issues Faced:
 - File path mismatches for reading merged CSV.
 - `mean_squared_error(..., squared=False)` not supported in current sklearn version → manually computed RMSE.
 - Small data size caused misleading metrics (perfect fit).
 
-## 📌 Learnings:
+## Learnings:
 - Importance of data quantity for model generalization.
 - Need for robust path handling and reproducibility.
 - Verified working ML pipeline: data → model → evaluation → save.
 
-## 🔜 Next Steps (Day 5 Preview):
+## Next Steps (Day 6 Preview):
 - Collect more data points by running fetch script over multiple timestamps/days.
 - Expand dataset across time to enable meaningful train/test split.
 - Retrain and re-evaluate ML model with real variation.
+
+## Day 6 – 9 July 2025
+Focus:
+Fetch latest AQI + Weather data and rebuild prediction pipeline
+
+Tasks Completed:
+
+Fetched latest AQI data: aqicn_2025-07-09_15-01.csv
+
+Fetched latest weather data using fetch_weather_data.py
+
+Cleaned data: handled missing CO value in Vapi
+
+Ensured city name consistency across both datasets
+
+Recalculated realistic Heat Index using corrected Rothfusz formula (°C scale)
+
+Merged both datasets using merge_latest_for_ml.py
+
+Saved merged file: data/merged_latest_aqi_weather_with_heat_index.csv
+
+Re-trained Linear Regression model on new data
+
+Verified that predicted Heat Index closely matched actual values
+
+Saved prediction plot: reports/images/heat_index_prediction_plot.png
+
+Full ML pipeline confirmed working on latest, clean data
+
+Outcome:
+Data pipeline now reflects real-world behavior using clean and current data. Heat Index predictions are realistic and correctly modeled.
+
+Pending:
+
+Add past datasets to train ML on a larger base
+
+Explore alternate ML algorithms
+
+Begin Streamlit dashboard development
+
