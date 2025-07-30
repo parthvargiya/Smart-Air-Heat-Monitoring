@@ -1,79 +1,80 @@
 # streamlit_app/app.py
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import streamlit as st
 import pandas as pd
-import joblib
-import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Set page configuration
+from utils.fetch_live_data import fetch_all_live_data
+
 st.set_page_config(page_title="Smart Air & Heat Index Monitoring", layout="wide")
+st.title("🌍 Smart Air & Heat Index Monitoring Dashboard")
 
-# Load data and model
-DATA_PATH = os.path.join("data", "merged_aqi_weather_with_heat_index_2025-07-09.csv")
-MODEL_PATH = os.path.join("models", "heat_index_predictor.pkl")
+# --- Step 1: Fetch live data ---
+@st.cache_data(show_spinner=True)
+def load_live_data():
+    return fetch_all_live_data()
 
-@st.cache_data
-def load_data():
-    return pd.read_csv(DATA_PATH)
+df = load_live_data()
 
-@st.cache_resource
-def load_model():
-    return joblib.load(MODEL_PATH)
+if df is None or df.empty:
+    st.error("No live data available. Please check API or connectivity.")
+    st.stop()
 
-# Load resources
-df = load_data()
-model = load_model()
+# --- Step 2: City Selection ---
+cities = df["city"].unique()
+selected_city = st.selectbox("Select City", cities)
 
-# Title
-st.title("Smart Air & Heat Index Monitoring Dashboard")
-
-# Sidebar
-cities = df["city"].unique().tolist()
-selected_city = st.sidebar.selectbox("📍 Select City", cities)
-
-# Filter city data
 city_df = df[df["city"] == selected_city]
 
-# Display basic info
-st.subheader(f"Current Conditions in {selected_city}")
-st.dataframe(city_df)
+# --- Step 3: Show City Snapshot ---
+st.subheader(f"Live Snapshot – {selected_city}")
+st.dataframe(city_df, use_container_width=True)
 
-# Section placeholders (will be updated next)
-st.markdown("---")
-st.header("Charts and Analysis")
+# --- Step 4: Show Key Metrics ---
+st.subheader(f"🔹 Key Metrics for {selected_city}")
+col1, col2, col3 = st.columns(3)
 
-# 1. Pollution Bar Chart
-st.subheader("1. Pollution Level Comparison – Ahmedabad vs Vapi")
-st.image("reports/images/pollutant_bar_chart.png", use_container_width=True)
+with col1:
+    st.metric("Temperature (°C)", city_df["temperature"].values[0])
+with col2:
+    st.metric("Humidity (%)", city_df["humidity"].values[0])
+with col3:
+    st.metric("Heat Index (°C)", city_df["heat_index"].values[0])
 
-# 2. Heat Index Bar Chart
-st.subheader("2. Heat Index – Citywise Comparison")
-st.image("reports/images/heat_index_bar_chart.png", use_container_width=True)
+# --- Step 5: Heat Index Bar Chart ---
+st.subheader("Heat Index Comparison Across Cities")
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.barplot(data=df, x="city", y="heat_index", palette="coolwarm", ax=ax)
+ax.set_ylabel("Heat Index (°C)")
+ax.set_title("City-wise Heat Index")
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')  # Rotation fix
+plt.tight_layout()
+st.pyplot(fig)
 
-# 3. Correlation Scatter Plots
-st.subheader("3. Correlation: Pollutants & Weather vs Heat Index")
 
-st.markdown("**PM2.5 vs Heat Index**")
-st.image("reports/images/pm25_vs_heat_index.png", use_container_width=True)
+# --- Step 6: Pollutant Comparison Chart ---
+st.subheader(f"Pollutant Levels in {selected_city}")
+pollutants = ["pm25", "pm10", "no2", "so2", "co"]
+pollutant_values = {
+    p: city_df[p].values[0] if p in city_df.columns else "N/A"
+    for p in pollutants
+}
 
-st.markdown("**PM10 vs Heat Index**")
-st.image("reports/images/pm10_vs_heat_index.png", use_container_width=True)
+pollution_df = pd.DataFrame({
+    "Pollutant": list(pollutant_values.keys()),
+    "Value": list(pollutant_values.values())
+})
 
-st.markdown("**NO2 vs Heat Index**")
-st.image("reports/images/no2_vs_heat_index.png", use_container_width=True)
+st.bar_chart(pollution_df.set_index("Pollutant"))
+st.write("Cities available in live data:", df["city"].unique())
 
-st.markdown("**SO2 vs Heat Index**")
-st.image("reports/images/so2_vs_heat_index.png", use_container_width=True)
-
-st.markdown("**Temperature vs Heat Index**")
-st.image("reports/images/temperature_vs_heat_index.png", use_container_width=True)
-
-# 4. Prediction Results
-st.subheader("4. Machine Learning – Heat Index Prediction (Actual vs Predicted)")
-st.image("reports/images/heat_index_prediction_plot.png", use_container_width=True)
 
 # Footer
 st.markdown("---")
 st.markdown("Project: Smart Air & Heat Index Monitoring | Author: Parth Varagiya")
+
